@@ -78,12 +78,31 @@ function CheckoutPage() {
   }
 
   const submit = async () => {
-    if (name.trim().length < 2) return toast.error("Escribe tu nombre completo");
-    if (phone.replace(/\D/g, "").length < 7) return toast.error("Escribe tu número de WhatsApp");
-    if (!department) return toast.error("Selecciona tu departamento");
-    if (!destination) return toast.error("Selecciona tu destino");
-    if (!transport) return toast.error("Selecciona el tipo de transporte");
-    if (!receiptFile) return toast.error("Sube el comprobante de tu pago por QR");
+    if (name.trim().length < 2) {
+      toast.error("Escribe tu nombre completo");
+      return;
+    }
+    if (phone.replace(/\D/g, "").length < 7) {
+      toast.error("Escribe tu número de WhatsApp");
+      return;
+    }
+    if (!department) {
+      toast.error("Selecciona tu departamento");
+      return;
+    }
+    if (!destination) {
+      toast.error("Selecciona tu destino");
+      return;
+    }
+    if (!transport) {
+      toast.error("Selecciona el tipo de transporte");
+      return;
+    }
+    if (!receiptFile) {
+      toast.error("Sube el comprobante de tu pago por QR");
+      return;
+    }
+
 
     setSubmitting(true);
     try {
