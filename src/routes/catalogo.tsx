@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { categoriesQuery, productsQuery } from "@/lib/queries";
 
-type CatalogSearch = { categoria?: string };
+type CatalogSearch = { categoria?: string | undefined };
 
 export const Route = createFileRoute("/catalogo")({
   validateSearch: (search: Record<string, unknown>): CatalogSearch => ({
