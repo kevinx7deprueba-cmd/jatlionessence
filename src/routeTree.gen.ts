@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CarritoRouteImport } from './routes/carrito'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as PromocionesRouteImport } from './routes/promociones'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ProductoIdRouteImport } from './routes/producto.$id'
@@ -42,6 +43,11 @@ const CatalogoRoute = CatalogoRouteImport.update({
   path: '/catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PromocionesRoute = PromocionesRouteImport.update({
   id: '/promociones',
   path: '/promociones',
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/carrito': typeof CarritoRoute
   '/catalogo': typeof CatalogoRoute
+  '/checkout': typeof CheckoutRoute
   '/promociones': typeof PromocionesRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/producto/$id': typeof ProductoIdRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/carrito': typeof CarritoRoute
   '/catalogo': typeof CatalogoRoute
+  '/checkout': typeof CheckoutRoute
   '/promociones': typeof PromocionesRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/producto/$id': typeof ProductoIdRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/carrito': typeof CarritoRoute
   '/catalogo': typeof CatalogoRoute
+  '/checkout': typeof CheckoutRoute
   '/promociones': typeof PromocionesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/producto/$id': typeof ProductoIdRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrito'
     | '/catalogo'
+    | '/checkout'
     | '/promociones'
     | '/admin'
     | '/producto/$id'
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrito'
     | '/catalogo'
+    | '/checkout'
     | '/promociones'
     | '/admin'
     | '/producto/$id'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carrito'
     | '/catalogo'
+    | '/checkout'
     | '/promociones'
     | '/_authenticated/admin'
     | '/producto/$id'
@@ -124,6 +136,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CarritoRoute: typeof CarritoRoute
   CatalogoRoute: typeof CatalogoRoute
+  CheckoutRoute: typeof CheckoutRoute
   PromocionesRoute: typeof PromocionesRoute
   ProductoIdRoute: typeof ProductoIdRoute
 }
@@ -163,6 +176,13 @@ declare module '@tanstack/react-router' {
       path: '/catalogo'
       fullPath: '/catalogo'
       preLoaderRoute: typeof CatalogoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/promociones': {
@@ -206,6 +226,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CarritoRoute: CarritoRoute,
   CatalogoRoute: CatalogoRoute,
+  CheckoutRoute: CheckoutRoute,
   PromocionesRoute: PromocionesRoute,
   ProductoIdRoute: ProductoIdRoute,
 }
