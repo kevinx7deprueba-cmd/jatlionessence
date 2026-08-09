@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          blurb: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          blurb?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          blurb?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -64,43 +97,70 @@ export type Database = {
           address: string
           created_at: string
           customer_name: string
+          department: string
+          destination: string
           id: string
           notes: string
+          order_number: string | null
+          payment_method: string
           phone: string
+          receipt_path: string | null
+          shipping_cost: number
           status: string
+          subtotal: number
           total: number
+          transport: string
         }
         Insert: {
           address?: string
           created_at?: string
           customer_name: string
+          department?: string
+          destination?: string
           id?: string
           notes?: string
+          order_number?: string | null
+          payment_method?: string
           phone: string
+          receipt_path?: string | null
+          shipping_cost?: number
           status?: string
+          subtotal?: number
           total?: number
+          transport?: string
         }
         Update: {
           address?: string
           created_at?: string
           customer_name?: string
+          department?: string
+          destination?: string
           id?: string
           notes?: string
+          order_number?: string | null
+          payment_method?: string
           phone?: string
+          receipt_path?: string | null
+          shipping_cost?: number
           status?: string
+          subtotal?: number
           total?: number
+          transport?: string
         }
         Relationships: []
       }
       products: {
         Row: {
           category: string
+          compare_at_price: number
           created_at: string
           description: string
           featured: boolean
           id: string
           image_url: string | null
           is_active: boolean
+          is_new: boolean
+          is_offer: boolean
           name: string
           price: number
           stock: number
@@ -108,12 +168,15 @@ export type Database = {
         }
         Insert: {
           category: string
+          compare_at_price?: number
           created_at?: string
           description?: string
           featured?: boolean
           id?: string
           image_url?: string | null
           is_active?: boolean
+          is_new?: boolean
+          is_offer?: boolean
           name: string
           price?: number
           stock?: number
@@ -121,16 +184,100 @@ export type Database = {
         }
         Update: {
           category?: string
+          compare_at_price?: number
           created_at?: string
           description?: string
           featured?: boolean
           id?: string
           image_url?: string | null
           is_active?: boolean
+          is_new?: boolean
+          is_offer?: boolean
           name?: string
           price?: number
           stock?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      shipping_destinations: {
+        Row: {
+          created_at: string
+          department: string
+          destination: string
+          id: string
+          is_active: boolean
+          notes: string
+          transports: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          destination: string
+          id?: string
+          is_active?: boolean
+          notes?: string
+          transports?: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          destination?: string
+          id?: string
+          is_active?: boolean
+          notes?: string
+          transports?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      store_settings: {
+        Row: {
+          contact_info: string
+          created_at: string
+          facebook_url: string
+          id: string
+          instagram_url: string
+          logo_url: string | null
+          qr_image_url: string | null
+          shipping_cost: number
+          singleton: boolean
+          store_name: string
+          tiktok_url: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          contact_info?: string
+          created_at?: string
+          facebook_url?: string
+          id?: string
+          instagram_url?: string
+          logo_url?: string | null
+          qr_image_url?: string | null
+          shipping_cost?: number
+          singleton?: boolean
+          store_name?: string
+          tiktok_url?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Update: {
+          contact_info?: string
+          created_at?: string
+          facebook_url?: string
+          id?: string
+          instagram_url?: string
+          logo_url?: string | null
+          qr_image_url?: string | null
+          shipping_cost?: number
+          singleton?: boolean
+          store_name?: string
+          tiktok_url?: string
+          updated_at?: string
+          whatsapp?: string
         }
         Relationships: []
       }
@@ -160,6 +307,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_order: {
+        Args: {
+          _customer_name: string
+          _department: string
+          _destination: string
+          _items: Json
+          _notes: string
+          _phone: string
+          _receipt_path: string
+          _shipping_cost: number
+          _transport: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
