@@ -17,6 +17,7 @@ import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as PromocionesRouteImport } from './routes/promociones'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as PedidoNumeroRouteImport } from './routes/pedido.$numero'
 import { Route as ProductoIdRouteImport } from './routes/producto.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -58,6 +59,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const PedidoNumeroRoute = PedidoNumeroRouteImport.update({
+  id: '/pedido/$numero',
+  path: '/pedido/$numero',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductoIdRoute = ProductoIdRouteImport.update({
   id: '/producto/$id',
   path: '/producto/$id',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/promociones': typeof PromocionesRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/pedido/$numero': typeof PedidoNumeroRoute
   '/producto/$id': typeof ProductoIdRoute
 }
 export interface FileRoutesByTo {
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/promociones': typeof PromocionesRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/pedido/$numero': typeof PedidoNumeroRoute
   '/producto/$id': typeof ProductoIdRoute
 }
 export interface FileRoutesById {
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/promociones': typeof PromocionesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/pedido/$numero': typeof PedidoNumeroRoute
   '/producto/$id': typeof ProductoIdRoute
 }
 export interface FileRouteTypes {
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/promociones'
     | '/admin'
+    | '/pedido/$numero'
     | '/producto/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/promociones'
     | '/admin'
+    | '/pedido/$numero'
     | '/producto/$id'
   id:
     | '__root__'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/promociones'
     | '/_authenticated/admin'
+    | '/pedido/$numero'
     | '/producto/$id'
   fileRoutesById: FileRoutesById
 }
@@ -138,6 +150,7 @@ export interface RootRouteChildren {
   CatalogoRoute: typeof CatalogoRoute
   CheckoutRoute: typeof CheckoutRoute
   PromocionesRoute: typeof PromocionesRoute
+  PedidoNumeroRoute: typeof PedidoNumeroRoute
   ProductoIdRoute: typeof ProductoIdRoute
 }
 
@@ -199,6 +212,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/pedido/$numero': {
+      id: '/pedido/$numero'
+      path: '/pedido/$numero'
+      fullPath: '/pedido/$numero'
+      preLoaderRoute: typeof PedidoNumeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/producto/$id': {
       id: '/producto/$id'
       path: '/producto/$id'
@@ -228,6 +248,7 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogoRoute: CatalogoRoute,
   CheckoutRoute: CheckoutRoute,
   PromocionesRoute: PromocionesRoute,
+  PedidoNumeroRoute: PedidoNumeroRoute,
   ProductoIdRoute: ProductoIdRoute,
 }
 export const routeTree = rootRouteImport
