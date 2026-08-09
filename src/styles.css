@@ -49,6 +49,10 @@
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
   --color-sand: var(--sand);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
   --color-clay: var(--clay);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -138,6 +142,13 @@
 
 @utility shadow-lift {
   box-shadow: var(--shadow-lift);
+}
+
+@utility text-gradient-gold {
+  background-image: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 @utility eyebrow {
