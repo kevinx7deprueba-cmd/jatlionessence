@@ -58,3 +58,25 @@ export async function uploadReceipt(file: File) {
   if (error) throw error;
   return path;
 }
+
+/** Firma la URL de un comprobante en el bucket privado "comprobantes" (solo admin). */
+export function useReceiptUrl(path?: string | null) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    if (!path) {
+      setUrl(null);
+      return;
+    }
+    supabase.storage
+      .from("comprobantes")
+      .createSignedUrl(path, 60 * 60)
+      .then(({ data }) => {
+        if (active) setUrl(data?.signedUrl ?? null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [path]);
+  return url;
+}

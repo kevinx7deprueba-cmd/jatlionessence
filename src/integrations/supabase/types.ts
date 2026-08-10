@@ -47,6 +47,81 @@ export type Database = {
         }
         Relationships: []
       }
+      combo_items: {
+        Row: {
+          combo_id: string
+          created_at: string
+          id: string
+          product_id: string
+          quantity: number
+        }
+        Insert: {
+          combo_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+          quantity?: number
+        }
+        Update: {
+          combo_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combo_items_combo_id_fkey"
+            columns: ["combo_id"]
+            isOneToOne: false
+            referencedRelation: "combos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "combo_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      combos: {
+        Row: {
+          created_at: string
+          description: string
+          discount_percent: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          discount_percent?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          discount_percent?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -99,6 +174,7 @@ export type Database = {
           customer_name: string
           department: string
           destination: string
+          discount: number
           id: string
           notes: string
           order_number: string | null
@@ -117,6 +193,7 @@ export type Database = {
           customer_name: string
           department?: string
           destination?: string
+          discount?: number
           id?: string
           notes?: string
           order_number?: string | null
@@ -135,6 +212,7 @@ export type Database = {
           customer_name?: string
           department?: string
           destination?: string
+          discount?: number
           id?: string
           notes?: string
           order_number?: string | null
@@ -235,6 +313,8 @@ export type Database = {
       }
       store_settings: {
         Row: {
+          combo_discount_percent: number
+          combo_min_items: number
           contact_info: string
           created_at: string
           facebook_url: string
@@ -250,6 +330,8 @@ export type Database = {
           whatsapp: string
         }
         Insert: {
+          combo_discount_percent?: number
+          combo_min_items?: number
           contact_info?: string
           created_at?: string
           facebook_url?: string
@@ -265,6 +347,8 @@ export type Database = {
           whatsapp?: string
         }
         Update: {
+          combo_discount_percent?: number
+          combo_min_items?: number
           contact_info?: string
           created_at?: string
           facebook_url?: string

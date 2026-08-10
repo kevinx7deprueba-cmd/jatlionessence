@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Category, Destination, Product, StoreSettings } from "./store";
+import type { Category, Combo, Destination, Product, StoreSettings } from "./store";
 
 export const settingsQuery = queryOptions({
   queryKey: ["store-settings"],
@@ -48,5 +48,41 @@ export const destinationsQuery = queryOptions({
       .order("destination", { ascending: true });
     if (error) throw error;
     return (data ?? []) as unknown as Destination[];
+  },
+});
+
+export const combosQuery = queryOptions({
+  queryKey: ["combos"],
+  queryFn: async (): Promise<Combo[]> => {
+    const { data, error } = await supabase
+      .from("combos")
+      .select("*, combo_items(*)")
+      .order("sort_order", { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as unknown as Combo[];
+  },
+});
+
+export const adminOrdersQuery = queryOptions({
+  queryKey: ["admin-orders"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*, order_items(*)")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data ?? [];
+  },
+});
+
+export const adminProductsQuery = queryOptions({
+  queryKey: ["admin-products"],
+  queryFn: async (): Promise<Product[]> => {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as unknown as Product[];
   },
 });

@@ -7,6 +7,7 @@ export type OrderSnapshot = {
   transport: string;
   items: { name: string; qty: number; price: number }[];
   subtotal: number;
+  discount?: number;
   shipping: number;
   total: number;
 };

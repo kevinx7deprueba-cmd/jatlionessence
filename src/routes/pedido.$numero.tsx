@@ -64,6 +64,12 @@ function ConfirmationPage() {
               <span className="text-muted-foreground">Subtotal</span>
               <span>{formatPrice(order.subtotal)}</span>
             </div>
+            {order.discount ? (
+              <div className="flex justify-between text-gold">
+                <span>Descuento combo</span>
+                <span>-{formatPrice(order.discount)}</span>
+              </div>
+            ) : null}
             <div className="flex justify-between">
               <span className="text-muted-foreground">Envío</span>
               <span>{formatPrice(order.shipping)}</span>
