@@ -7,7 +7,7 @@ import { CartLine } from "@/components/site/cart-line";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { settingsQuery } from "@/lib/queries";
-import { formatPrice } from "@/lib/store";
+import { comboDiscount, comboRules, formatPrice } from "@/lib/store";
 
 export const Route = createFileRoute("/carrito")({
   head: () => ({
@@ -22,9 +22,12 @@ export const Route = createFileRoute("/carrito")({
 });
 
 function CartPage() {
-  const { items, subtotal } = useCart();
+  const { items, subtotal, count } = useCart();
   const { data: settings } = useQuery(settingsQuery);
   const shipping = Number(settings?.shipping_cost ?? 20);
+  const rules = comboRules(settings);
+  const discount = comboDiscount(subtotal, count, rules);
+  const falta = Math.max(rules.minItems - count, 0);
 
   return (
     <StoreLayout>
@@ -52,13 +55,23 @@ function CartPage() {
                 <span className="text-muted-foreground">Subtotal</span>
                 <span>{formatPrice(subtotal)}</span>
               </div>
+              {discount > 0 ? (
+                <div className="mt-2 flex justify-between text-sm text-gold">
+                  <span>🎁 Descuento combo ({rules.percent}%)</span>
+                  <span>-{formatPrice(discount)}</span>
+                </div>
+              ) : falta > 0 ? (
+                <p className="mt-2 rounded-md bg-secondary p-2 text-xs text-muted-foreground">
+                  Agrega {falta} producto(s) más y obtén {rules.percent}% de descuento por combo.
+                </p>
+              ) : null}
               <div className="mt-2 flex justify-between text-sm">
                 <span className="text-muted-foreground">📦 Envío departamental</span>
                 <span>{formatPrice(shipping)}</span>
               </div>
               <div className="mt-3 flex justify-between border-t border-border pt-3 font-display text-2xl">
                 <span>TOTAL</span>
-                <span>{formatPrice(subtotal + shipping)}</span>
+                <span>{formatPrice(subtotal - discount + shipping)}</span>
               </div>
               <Button asChild className="mt-5 h-12 w-full rounded-full">
                 <Link to="/checkout">CONTINUAR CON EL PEDIDO</Link>

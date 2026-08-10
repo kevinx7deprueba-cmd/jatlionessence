@@ -87,4 +87,37 @@ export type StoreSettings = {
   instagram_url: string;
   facebook_url: string;
   tiktok_url: string;
+  combo_min_items: number;
+  combo_discount_percent: number;
 };
+
+export type ComboItem = {
+  id: string;
+  combo_id: string;
+  product_id: string;
+  quantity: number;
+};
+
+export type Combo = {
+  id: string;
+  name: string;
+  description: string;
+  image_url: string | null;
+  discount_percent: number;
+  is_active: boolean;
+  sort_order: number;
+  combo_items?: ComboItem[];
+};
+
+export type ComboRules = { minItems: number; percent: number };
+
+export const comboRules = (settings?: { combo_min_items?: number; combo_discount_percent?: number } | null): ComboRules => ({
+  minItems: Number(settings?.combo_min_items ?? 3),
+  percent: Number(settings?.combo_discount_percent ?? 20),
+});
+
+/** Descuento por armar combo: aplica cuando el carrito tiene al menos `minItems` unidades. */
+export const comboDiscount = (subtotal: number, units: number, rules: ComboRules) =>
+  rules.minItems > 0 && units >= rules.minItems
+    ? Math.round(subtotal * (rules.percent / 100) * 100) / 100
+    : 0;

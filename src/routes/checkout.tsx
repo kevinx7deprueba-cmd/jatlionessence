@@ -20,7 +20,7 @@ import {
 import { useAssetUrl, uploadReceipt } from "@/lib/assets";
 import { useCart } from "@/lib/cart";
 import { destinationsQuery, settingsQuery } from "@/lib/queries";
-import { DEPARTMENTS, formatPrice, transportLabel } from "@/lib/store";
+import { comboDiscount, comboRules, DEPARTMENTS, formatPrice, transportLabel } from "@/lib/store";
 import { saveOrderSnapshot } from "@/lib/order-storage";
 
 export const Route = createFileRoute("/checkout")({
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/checkout")({
 
 function CheckoutPage() {
   const navigate = useNavigate();
-  const { items, subtotal, clear } = useCart();
+  const { items, subtotal, count, clear } = useCart();
   const { data: settings } = useQuery(settingsQuery);
   const { data: destinations = [] } = useQuery(destinationsQuery);
   const qrUrl = useAssetUrl(settings?.qr_image_url ?? null);
@@ -55,7 +55,9 @@ function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const shipping = Number(settings?.shipping_cost ?? 20);
-  const total = subtotal + shipping;
+  const rules = comboRules(settings);
+  const discount = comboDiscount(subtotal, count, rules);
+  const total = subtotal - discount + shipping;
 
   const activeDestinations = useMemo(
     () => destinations.filter((d) => d.is_active && d.department === department),
@@ -130,6 +132,7 @@ function CheckoutPage() {
         transport,
         items: items.map((i) => ({ name: i.name, qty: i.qty, price: Number(i.price) })),
         subtotal,
+        discount,
         shipping,
         total,
       });
@@ -278,6 +281,12 @@ function CheckoutPage() {
               <span className="text-muted-foreground">Subtotal de productos</span>
               <span>{formatPrice(subtotal)}</span>
             </div>
+            {discount > 0 ? (
+              <div className="flex justify-between text-gold">
+                <span>🎁 Descuento combo ({rules.percent}%)</span>
+                <span>-{formatPrice(discount)}</span>
+              </div>
+            ) : null}
             <div className="flex justify-between">
               <span className="text-muted-foreground">Envío departamental JATLION Essence</span>
               <span>{formatPrice(shipping)}</span>
