@@ -12,7 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { useAssetUrl } from "@/lib/assets";
 import { useCart } from "@/lib/cart";
 import { combosQuery, productsQuery, settingsQuery } from "@/lib/queries";
-import { comboDiscount, comboRules, formatPrice, type Combo, type Product } from "@/lib/store";
+import { comboDiscount, comboRules, comboUnits, formatPrice, type Combo, type Product } from "@/lib/store";
 
 export const Route = createFileRoute("/combos")({
   head: () => ({
@@ -89,6 +89,7 @@ function ComboCard({ combo, products }: { combo: Combo; products: Product[] }) {
                   price: Number(l.product.price),
                   image_url: l.product.image_url,
                   stock: l.product.stock,
+                  combo: true,
                 },
                 l.qty,
               ),
@@ -107,12 +108,13 @@ function CombosPage() {
   const { data: settings } = useQuery(settingsQuery);
   const { data: products = [] } = useQuery(productsQuery);
   const { data: combos = [], isLoading } = useQuery(combosQuery);
-  const { count, subtotal } = useCart();
+  const { items, count } = useCart();
 
   const rules = comboRules(settings);
   const activos = combos.filter((c) => c.is_active);
-  const falta = Math.max(rules.minItems - count, 0);
-  const descuento = comboDiscount(subtotal, count, rules);
+  const unidadesCombo = comboUnits(items);
+  const falta = Math.max(rules.minItems - unidadesCombo, 0);
+  const descuento = comboDiscount(items, rules);
 
   const destacados = useMemo(
     () => products.filter((p) => p.stock > 0).slice(0, 12),
@@ -128,7 +130,7 @@ function CombosPage() {
           quieras.
         </p>
 
-        <section className="mt-6 rounded-lg border border-gold/40 bg-secondary p-5">
+        <section id="armar-mi-combo" className="mt-6 rounded-lg border border-gold/40 bg-secondary p-5">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-gold" />
             <h2 className="font-display text-2xl">Arma tu combo y ahorra {rules.percent}%</h2>
@@ -139,11 +141,11 @@ function CombosPage() {
           </p>
 
           <div className="mt-4">
-            <Progress value={Math.min((count / Math.max(rules.minItems, 1)) * 100, 100)} />
+            <Progress value={Math.min((unidadesCombo / Math.max(rules.minItems, 1)) * 100, 100)} />
             <p className="mt-2 text-sm">
               {falta > 0 ? (
                 <>
-                  Llevas <strong>{count}</strong> producto(s). Te falta{" "}
+                  Llevas <strong>{unidadesCombo}</strong> producto(s) en tu combo. Te falta{" "}
                   <strong>{falta}</strong> para activar tu descuento.
                 </>
               ) : (
@@ -157,7 +159,7 @@ function CombosPage() {
 
           <div className="mt-4 flex flex-wrap gap-3">
             <Button asChild className="h-11 rounded-full">
-              <Link to="/catalogo">Elegir productos</Link>
+              <a href="#suma-productos">Armar mi combo</a>
             </Button>
             <Button asChild variant="outline" className="h-11 rounded-full">
               <Link to="/carrito">Ver mi carrito ({count})</Link>
@@ -180,10 +182,10 @@ function CombosPage() {
           </div>
         )}
 
-        <h2 className="mt-10 font-display text-3xl">Suma productos a tu combo</h2>
+        <h2 id="suma-productos" className="mt-10 font-display text-3xl">Suma productos a tu combo</h2>
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
           {destacados.map((p) => (
-            <ProductCard key={p.id} product={p} />
+            <ProductCard key={p.id} product={p} combo />
           ))}
         </div>
       </div>
