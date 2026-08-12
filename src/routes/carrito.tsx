@@ -7,7 +7,7 @@ import { CartLine } from "@/components/site/cart-line";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { settingsQuery } from "@/lib/queries";
-import { comboDiscount, comboRules, formatPrice } from "@/lib/store";
+import { comboDiscount, comboRules, comboUnits, formatPrice } from "@/lib/store";
 
 export const Route = createFileRoute("/carrito")({
   head: () => ({
@@ -22,12 +22,13 @@ export const Route = createFileRoute("/carrito")({
 });
 
 function CartPage() {
-  const { items, subtotal, count } = useCart();
+  const { items, subtotal } = useCart();
   const { data: settings } = useQuery(settingsQuery);
   const shipping = Number(settings?.shipping_cost ?? 20);
   const rules = comboRules(settings);
-  const discount = comboDiscount(subtotal, count, rules);
-  const falta = Math.max(rules.minItems - count, 0);
+  const discount = comboDiscount(items, rules);
+  const unidadesCombo = comboUnits(items);
+  const falta = unidadesCombo > 0 ? Math.max(rules.minItems - unidadesCombo, 0) : 0;
 
   return (
     <StoreLayout>
