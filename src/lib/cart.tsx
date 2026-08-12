@@ -10,6 +10,8 @@ export type CartItem = {
   qty: number;
   /** true si el producto fue agregado desde el apartado de Combos */
   combo?: boolean;
+  /** Descuento fijo (%) cuando el item viene de un combo ya armado */
+  comboPercent?: number;
 };
 
 type CartContextValue = {
@@ -50,7 +52,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (existing) {
         return prev.map((i) =>
           i.id === item.id
-            ? { ...i, ...item, combo: Boolean(i.combo || item.combo), qty: Math.min(i.qty + qty, Math.max(item.stock, 1)) }
+            ? { ...i, ...item, combo: Boolean(i.combo || item.combo),
+                comboPercent: Math.max(Number(i.comboPercent ?? 0), Number(item.comboPercent ?? 0)), qty: Math.min(i.qty + qty, Math.max(item.stock, 1)) }
             : i,
         );
       }

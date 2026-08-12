@@ -118,7 +118,7 @@ function CheckoutPage() {
         _notes: notes,
         _shipping_cost: shipping,
         _receipt_path: receiptPath,
-        _items: items.map((i) => ({ id: i.id, qty: i.qty, combo: Boolean(i.combo) })),
+        _items: items.map((i) => ({ id: i.id, qty: i.qty, combo: Boolean(i.combo), combo_percent: Number(i.comboPercent ?? 0) })),
       });
       if (error) throw error;
 
