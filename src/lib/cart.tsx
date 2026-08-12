@@ -50,7 +50,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (existing) {
         return prev.map((i) =>
           i.id === item.id
-            ? { ...i, ...item, combo: i.combo || item.combo, qty: Math.min(i.qty + qty, Math.max(item.stock, 1)) }
+            ? { ...i, ...item, combo: Boolean(i.combo || item.combo), qty: Math.min(i.qty + qty, Math.max(item.stock, 1)) }
             : i,
         );
       }
