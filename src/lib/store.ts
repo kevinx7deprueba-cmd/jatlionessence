@@ -117,22 +117,31 @@ export const comboRules = (settings?: { combo_min_items?: number; combo_discount
 });
 
 /**
- * Descuento por combo: SOLO aplica a los productos agregados desde el apartado "Combos"
- * (items marcados con `combo: true`) y cuando alcanzan el mínimo de unidades.
+ * Descuento por combo:
+ * - Combos ya armados (items con `comboPercent`): el descuento aplica siempre,
+ *   sin importar cuántos productos lleve el carrito.
+ * - "Arma tu combo" (items con `combo: true` sin porcentaje propio): aplica solo
+ *   al alcanzar el mínimo de unidades.
  * Las compras normales del catálogo nunca reciben descuento.
  */
 export const comboDiscount = (
-  items: { price: number; qty: number; combo?: boolean }[],
+  items: { price: number; qty: number; combo?: boolean; comboPercent?: number }[],
   rules: ComboRules,
 ) => {
-  const comboItems = items.filter((i) => i.combo);
-  const units = comboItems.reduce((s, i) => s + i.qty, 0);
-  if (rules.minItems <= 0 || units < rules.minItems) return 0;
-  const comboSubtotal = comboItems.reduce((s, i) => s + Number(i.price) * i.qty, 0);
-  return Math.round(comboSubtotal * (rules.percent / 100) * 100) / 100;
+  const fijos = items.filter((i) => Number(i.comboPercent ?? 0) > 0);
+  let total = fijos.reduce(
+    (s, i) => s + Number(i.price) * i.qty * (Number(i.comboPercent) / 100),
+    0,
+  );
+
+  const armados = items.filter((i) => i.combo && !Number(i.comboPercent ?? 0));
+  const units = armados.reduce((s, i) => s + i.qty, 0);
+  if (rules.minItems > 0 && units >= rules.minItems) {
+    total += armados.reduce((s, i) => s + Number(i.price) * i.qty, 0) * (rules.percent / 100);
+  }
+  return Math.round(total * 100) / 100;
 };
 
-/** Unidades del carrito que pertenecen al flujo de combos. */
-export const comboUnits = (items: { qty: number; combo?: boolean }[]) =>
-  items.reduce((s, i) => s + (i.combo ? i.qty : 0), 0);
-
+/** Unidades del carrito que pertenecen al flujo "arma tu combo". */
+export const comboUnits = (items: { qty: number; combo?: boolean; comboPercent?: number }[]) =>
+  items.reduce((s, i) => s + (i.combo && !Number(i.comboPercent ?? 0) ? i.qty : 0), 0);

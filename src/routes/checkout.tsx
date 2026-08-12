@@ -118,7 +118,7 @@ function CheckoutPage() {
         _notes: notes,
         _shipping_cost: shipping,
         _receipt_path: receiptPath,
-        _items: items.map((i) => ({ id: i.id, qty: i.qty, combo: Boolean(i.combo) })),
+        _items: items.map((i) => ({ id: i.id, qty: i.qty, combo: Boolean(i.combo), combo_percent: Number(i.comboPercent ?? 0) })),
       });
       if (error) throw error;
 
@@ -283,7 +283,7 @@ function CheckoutPage() {
             </div>
             {discount > 0 ? (
               <div className="flex justify-between text-gold">
-                <span>🎁 Descuento combo ({rules.percent}%)</span>
+                <span>🎁 Descuento combo</span>
                 <span>-{formatPrice(discount)}</span>
               </div>
             ) : null}

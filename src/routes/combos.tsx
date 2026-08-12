@@ -90,6 +90,7 @@ function ComboCard({ combo, products }: { combo: Combo; products: Product[] }) {
                   image_url: l.product.image_url,
                   stock: l.product.stock,
                   combo: true,
+                  comboPercent: pct,
                 },
                 l.qty,
               ),
