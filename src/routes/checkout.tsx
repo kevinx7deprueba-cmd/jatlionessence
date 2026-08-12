@@ -283,7 +283,7 @@ function CheckoutPage() {
             </div>
             {discount > 0 ? (
               <div className="flex justify-between text-gold">
-                <span>🎁 Descuento combo ({rules.percent}%)</span>
+                <span>🎁 Descuento combo</span>
                 <span>-{formatPrice(discount)}</span>
               </div>
             ) : null}
