@@ -70,6 +70,13 @@ function HomePage() {
             >
               <Link to="/promociones">🔥 VER PROMOCIONES</Link>
             </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-12 rounded-full border-white/30 bg-transparent px-8 text-ink-foreground hover:bg-white/10"
+            >
+              <Link to="/combos">🎁 COMBOS</Link>
+            </Button>
           </div>
         </div>
       </section>

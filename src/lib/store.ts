@@ -116,8 +116,23 @@ export const comboRules = (settings?: { combo_min_items?: number; combo_discount
   percent: Number(settings?.combo_discount_percent ?? 20),
 });
 
-/** Descuento por armar combo: aplica cuando el carrito tiene al menos `minItems` unidades. */
-export const comboDiscount = (subtotal: number, units: number, rules: ComboRules) =>
-  rules.minItems > 0 && units >= rules.minItems
-    ? Math.round(subtotal * (rules.percent / 100) * 100) / 100
-    : 0;
+/**
+ * Descuento por combo: SOLO aplica a los productos agregados desde el apartado "Combos"
+ * (items marcados con `combo: true`) y cuando alcanzan el mínimo de unidades.
+ * Las compras normales del catálogo nunca reciben descuento.
+ */
+export const comboDiscount = (
+  items: { price: number; qty: number; combo?: boolean }[],
+  rules: ComboRules,
+) => {
+  const comboItems = items.filter((i) => i.combo);
+  const units = comboItems.reduce((s, i) => s + i.qty, 0);
+  if (rules.minItems <= 0 || units < rules.minItems) return 0;
+  const comboSubtotal = comboItems.reduce((s, i) => s + Number(i.price) * i.qty, 0);
+  return Math.round(comboSubtotal * (rules.percent / 100) * 100) / 100;
+};
+
+/** Unidades del carrito que pertenecen al flujo de combos. */
+export const comboUnits = (items: { qty: number; combo?: boolean }[]) =>
+  items.reduce((s, i) => s + (i.combo ? i.qty : 0), 0);
+

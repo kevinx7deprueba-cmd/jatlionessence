@@ -8,6 +8,8 @@ export type CartItem = {
   image_url: string | null;
   stock: number;
   qty: number;
+  /** true si el producto fue agregado desde el apartado de Combos */
+  combo?: boolean;
 };
 
 type CartContextValue = {
@@ -48,7 +50,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (existing) {
         return prev.map((i) =>
           i.id === item.id
-            ? { ...i, ...item, qty: Math.min(i.qty + qty, Math.max(item.stock, 1)) }
+            ? { ...i, ...item, combo: Boolean(i.combo || item.combo), qty: Math.min(i.qty + qty, Math.max(item.stock, 1)) }
             : i,
         );
       }

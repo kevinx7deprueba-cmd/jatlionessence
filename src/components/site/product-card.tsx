@@ -7,7 +7,7 @@ import { formatPrice, type Product } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, combo = false }: { product: Product; combo?: boolean }) {
   const image = useAssetUrl(product.image_url);
   const { add } = useCart();
   const agotado = product.stock <= 0;
@@ -67,13 +67,14 @@ export function ProductCard({ product }: { product: Product }) {
                 price: Number(product.price),
                 image_url: product.image_url,
                 stock: product.stock,
+                combo,
               },
               1,
             );
-            toast.success("Agregado al carrito");
+            toast.success(combo ? "Agregado a tu combo" : "Agregado al carrito");
           }}
         >
-          {agotado ? "AGOTADO" : "Agregar al carrito"}
+          {agotado ? "AGOTADO" : combo ? "Agregar a mi combo" : "Agregar al carrito"}
         </Button>
       </div>
     </article>

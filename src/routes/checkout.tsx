@@ -40,7 +40,7 @@ export const Route = createFileRoute("/checkout")({
 
 function CheckoutPage() {
   const navigate = useNavigate();
-  const { items, subtotal, count, clear } = useCart();
+  const { items, subtotal, clear } = useCart();
   const { data: settings } = useQuery(settingsQuery);
   const { data: destinations = [] } = useQuery(destinationsQuery);
   const qrUrl = useAssetUrl(settings?.qr_image_url ?? null);
@@ -56,7 +56,7 @@ function CheckoutPage() {
 
   const shipping = Number(settings?.shipping_cost ?? 20);
   const rules = comboRules(settings);
-  const discount = comboDiscount(subtotal, count, rules);
+  const discount = comboDiscount(items, rules);
   const total = subtotal - discount + shipping;
 
   const activeDestinations = useMemo(
@@ -118,7 +118,7 @@ function CheckoutPage() {
         _notes: notes,
         _shipping_cost: shipping,
         _receipt_path: receiptPath,
-        _items: items.map((i) => ({ id: i.id, qty: i.qty })),
+        _items: items.map((i) => ({ id: i.id, qty: i.qty, combo: Boolean(i.combo) })),
       });
       if (error) throw error;
 
