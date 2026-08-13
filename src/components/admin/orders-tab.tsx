@@ -34,6 +34,7 @@ type OrderRow = {
   status: string;
   payment_method: string;
   receipt_path: string | null;
+  delivery_method: string | null;
   notes: string;
   order_items: { id: string; product_name: string; quantity: number; unit_price: number }[];
 };
@@ -78,7 +79,12 @@ function OrderCard({ order, onUpdate }: { order: OrderRow; onUpdate: (id: string
             {new Date(order.created_at).toLocaleString("es-BO")}
           </p>
         </div>
-        <Badge variant="outline">{statusLabel(order.status)}</Badge>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="outline">
+            {order.delivery_method === "recojo" ? "🚶 Recogida en persona" : "📦 Envío"}
+          </Badge>
+          <Badge variant="outline">{statusLabel(order.status)}</Badge>
+        </div>
       </div>
 
       <div className="mt-3 grid gap-1 text-sm sm:grid-cols-2">
@@ -88,14 +94,22 @@ function OrderCard({ order, onUpdate }: { order: OrderRow; onUpdate: (id: string
         <p>
           <span className="text-muted-foreground">WhatsApp:</span> {order.phone}
         </p>
-        <p>
-          <span className="text-muted-foreground">Destino:</span> {order.department} →{" "}
-          {order.destination}
-        </p>
-        <p>
-          <span className="text-muted-foreground">Transporte:</span>{" "}
-          {transportLabel(order.transport)}
-        </p>
+        {order.delivery_method === "recojo" ? (
+          <p>
+            <span className="text-muted-foreground">Entrega:</span> 🚶 El cliente recoge en persona
+          </p>
+        ) : (
+          <>
+            <p>
+              <span className="text-muted-foreground">Destino:</span> {order.department} →{" "}
+              {order.destination}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Transporte:</span>{" "}
+              {transportLabel(order.transport)}
+            </p>
+          </>
+        )}
       </div>
 
       <ul className="mt-3 space-y-1 border-t border-border pt-3 text-sm">

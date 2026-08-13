@@ -26,6 +26,18 @@ function ConfirmationPage() {
   const order = typeof window !== "undefined" ? readOrderSnapshot(numero) : null;
   const whatsapp = (settings?.whatsapp ?? "59174968246").replace(/\D/g, "");
 
+  const isPickup = order?.delivery_method === "recojo";
+
+  const pickupMessage = order
+    ? `Hola, JATLION Essence.\nAcabo de realizar el pedido #${order.order_number}.\nQuiero recoger mi pedido en persona.\n\n📦 PEDIDO:\n${order.items
+        .map((i) => `${i.name} x${i.qty} — ${formatPrice(i.price * i.qty)}`)
+        .join("\n")}\n\nSubtotal:\n${formatPrice(order.subtotal)}${
+        order.discount ? `\nDescuento combo:\n-${formatPrice(order.discount)}` : ""
+      }\nEnvío:\n${formatPrice(0)}\nTOTAL:\n${formatPrice(
+        order.total,
+      )}\n\nMétodo de pago:\nQR\n\nQuiero coordinar con ustedes cuándo y dónde puedo recoger mi pedido personalmente.`
+    : `Hola, JATLION Essence. Acabo de realizar el pedido #${numero}. Quiero recoger mi pedido en persona y coordinar la entrega.`;
+
   const message = order
     ? `Hola, JATLION Essence.\nAcabo de realizar el pedido #${order.order_number}.\n\nCliente:\n${order.customer_name}\n\nProductos:\n${order.items
         .map((i) => `${i.name} x${i.qty} — ${formatPrice(i.price * i.qty)}`)
@@ -79,19 +91,21 @@ function ConfirmationPage() {
               <span>{formatPrice(order.total)}</span>
             </div>
             <p className="pt-3 text-muted-foreground">
-              {order.department} → {order.destination} · {transportLabel(order.transport)} · Pago con
-              QR
+              {isPickup
+                ? "🤝 Recogida en persona · Pago con QR"
+                : `${order.department} → ${order.destination} · ${transportLabel(order.transport)} · Pago con QR`}
             </p>
           </div>
         )}
 
         <Button asChild className="mt-5 h-14 w-full rounded-full text-base">
           <a
-            href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`}
+            href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(isPickup ? pickupMessage : message)}`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <MessageCircle className="mr-2 h-5 w-5" /> ENVIAR PEDIDO POR WHATSAPP
+            <MessageCircle className="mr-2 h-5 w-5" />{" "}
+            {isPickup ? "🤝 COORDINAR LA ENTREGA CON EL PROVEEDOR" : "ENVIAR PEDIDO POR WHATSAPP"}
           </a>
         </Button>
         <Button asChild variant="outline" className="mt-3 h-12 w-full rounded-full">
