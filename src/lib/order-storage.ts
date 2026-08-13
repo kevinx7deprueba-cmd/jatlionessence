@@ -2,6 +2,8 @@ export type OrderSnapshot = {
   order_number: string;
   customer_name: string;
   phone: string;
+  /** "envio" | "recojo" */
+  delivery_method?: string;
   department: string;
   destination: string;
   transport: string;
