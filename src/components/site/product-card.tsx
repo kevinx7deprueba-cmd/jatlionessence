@@ -10,7 +10,17 @@ import { Badge } from "@/components/ui/badge";
 export function ProductCard({ product, combo = false }: { product: Product; combo?: boolean }) {
   const image = useAssetUrl(product.image_url);
   const { add } = useCart();
+  const navigate = useNavigate();
   const agotado = product.stock <= 0;
+
+  const cartItem = {
+    id: product.id,
+    name: product.name,
+    price: Number(product.price),
+    image_url: product.image_url,
+    stock: product.stock,
+    combo,
+  };
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-soft">
