@@ -51,10 +51,12 @@ function CheckoutPage() {
   const [destinationId, setDestinationId] = useState("");
   const [transport, setTransport] = useState("");
   const [notes, setNotes] = useState("");
+  const [deliveryMethod, setDeliveryMethod] = useState<"envio" | "recojo">("envio");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const shipping = Number(settings?.shipping_cost ?? 20);
+  const isPickup = deliveryMethod === "recojo";
+  const shipping = isPickup ? 0 : Number(settings?.shipping_cost ?? 20);
   const rules = comboRules(settings);
   const discount = comboDiscount(items, rules);
   const total = subtotal - discount + shipping;
@@ -88,17 +90,19 @@ function CheckoutPage() {
       toast.error("Escribe tu número de WhatsApp");
       return;
     }
-    if (!department) {
-      toast.error("Selecciona tu departamento");
-      return;
-    }
-    if (!destination) {
-      toast.error("Selecciona tu destino");
-      return;
-    }
-    if (!transport) {
-      toast.error("Selecciona el tipo de transporte");
-      return;
+    if (!isPickup) {
+      if (!department) {
+        toast.error("Selecciona tu departamento");
+        return;
+      }
+      if (!destination) {
+        toast.error("Selecciona tu destino");
+        return;
+      }
+      if (!transport) {
+        toast.error("Selecciona el tipo de transporte");
+        return;
+      }
     }
     if (!receiptFile) {
       toast.error("Sube el comprobante de tu pago por QR");
@@ -112,11 +116,12 @@ function CheckoutPage() {
       const { data, error } = await supabase.rpc("create_order", {
         _customer_name: name,
         _phone: phone,
-        _department: department,
-        _destination: destination.destination,
-        _transport: transport,
+        _department: isPickup ? "" : department,
+        _destination: isPickup ? "" : (destination?.destination ?? ""),
+        _transport: isPickup ? "" : transport,
         _notes: notes,
         _shipping_cost: shipping,
+        _delivery_method: deliveryMethod,
         _receipt_path: receiptPath,
         _items: items.map((i) => ({ id: i.id, qty: i.qty, combo: Boolean(i.combo), combo_percent: Number(i.comboPercent ?? 0) })),
       });
@@ -127,9 +132,10 @@ function CheckoutPage() {
         order_number: orderNumber,
         customer_name: name,
         phone,
-        department,
-        destination: destination.destination,
-        transport,
+        delivery_method: deliveryMethod,
+        department: isPickup ? "" : department,
+        destination: isPickup ? "" : (destination?.destination ?? ""),
+        transport: isPickup ? "" : transport,
         items: items.map((i) => ({ name: i.name, qty: i.qty, price: Number(i.price) })),
         subtotal,
         discount,
@@ -179,7 +185,36 @@ function CheckoutPage() {
         </section>
 
         <section className="mt-4 space-y-4 rounded-lg border border-border bg-card p-5">
-          <h2 className="font-display text-2xl">2. Envío departamental</h2>
+          <h2 className="font-display text-2xl">2. ¿Cómo quieres recibir tu pedido?</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => setDeliveryMethod("envio")}
+              className={`rounded-lg border p-4 text-left transition-colors ${
+                !isPickup ? "border-gold bg-secondary" : "border-border bg-background"
+              }`}
+            >
+              <span className="block font-display text-xl">📦 Quiero envío</span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                Envío departamental · {formatPrice(Number(settings?.shipping_cost ?? 20))}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeliveryMethod("recojo")}
+              className={`rounded-lg border p-4 text-left transition-colors ${
+                isPickup ? "border-gold bg-secondary" : "border-border bg-background"
+              }`}
+            >
+              <span className="block font-display text-xl">🤝 Quiero recogerlo en persona</span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                Sin costo de envío · coordinas la entrega por WhatsApp
+              </span>
+            </button>
+          </div>
+
+          {!isPickup && (
+          <>
           <div className="space-y-1.5">
             <Label>Departamento</Label>
             <Select
@@ -251,6 +286,8 @@ function CheckoutPage() {
               <p className="text-xs text-muted-foreground">{destination.notes}</p>
             ) : null}
           </div>
+          </>
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="notas">Referencia u observación (opcional)</Label>
@@ -266,6 +303,9 @@ function CheckoutPage() {
 
         <section className="mt-4 rounded-lg border border-border bg-card p-5">
           <h2 className="font-display text-2xl">3. Resumen</h2>
+          <Button asChild variant="outline" className="mt-3 h-11 w-full rounded-full">
+            <Link to="/catalogo">➕ Añadir más productos</Link>
+          </Button>
           <ul className="mt-3 space-y-1 text-sm">
             {items.map((i) => (
               <li key={i.id} className="flex justify-between gap-3">
@@ -296,16 +336,22 @@ function CheckoutPage() {
             <span>TOTAL</span>
             <span>{formatPrice(total)}</span>
           </div>
-          {destination && (
+          {isPickup ? (
+            <p className="mt-3 text-sm text-muted-foreground">
+              🤝 Recoges tu pedido en persona · sin costo de envío
+            </p>
+          ) : destination ? (
             <p className="mt-3 text-sm text-muted-foreground">
               Destino: {department} → {destination.destination}
               {transport ? ` · ${transportLabel(transport)}` : ""}
             </p>
-          )}
+          ) : null}
+          {!isPickup && (
           <p className="mt-3 rounded-md bg-secondary p-3 text-xs text-muted-foreground">
             El transporte seleccionado puede cobrar una tarifa adicional por la recepción de la
             encomienda. Esta tarifa no está incluida en el pago realizado a JATLION Essence.
           </p>
+          )}
         </section>
 
         <section className="mt-4 rounded-lg border border-border bg-card p-5">

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { useAssetUrl } from "@/lib/assets";
@@ -10,7 +10,17 @@ import { Badge } from "@/components/ui/badge";
 export function ProductCard({ product, combo = false }: { product: Product; combo?: boolean }) {
   const image = useAssetUrl(product.image_url);
   const { add } = useCart();
+  const navigate = useNavigate();
   const agotado = product.stock <= 0;
+
+  const cartItem = {
+    id: product.id,
+    name: product.name,
+    price: Number(product.price),
+    image_url: product.image_url,
+    stock: product.stock,
+    combo,
+  };
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-soft">
@@ -60,22 +70,25 @@ export function ProductCard({ product, combo = false }: { product: Product; comb
           className="h-11 w-full rounded-full"
           disabled={agotado}
           onClick={() => {
-            add(
-              {
-                id: product.id,
-                name: product.name,
-                price: Number(product.price),
-                image_url: product.image_url,
-                stock: product.stock,
-                combo,
-              },
-              1,
-            );
+            add(cartItem, 1);
             toast.success(combo ? "Agregado a tu combo" : "Agregado al carrito");
           }}
         >
           {agotado ? "AGOTADO" : combo ? "Agregar a mi combo" : "Agregar al carrito"}
         </Button>
+        {!combo && (
+          <Button
+            variant="outline"
+            className="h-11 w-full rounded-full"
+            disabled={agotado}
+            onClick={() => {
+              add(cartItem, 1);
+              navigate({ to: "/checkout" });
+            }}
+          >
+            Comprar ahora
+          </Button>
+        )}
       </div>
     </article>
   );
