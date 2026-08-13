@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Sparkles, Check } from "lucide-react";
 import { toast } from "sonner";
 
@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/site/product-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
 import { useAssetUrl } from "@/lib/assets";
 import { useCart } from "@/lib/cart";
 import { combosQuery, productsQuery, settingsQuery } from "@/lib/queries";
@@ -111,6 +112,8 @@ function CombosPage() {
   const { data: combos = [], isLoading } = useQuery(combosQuery);
   const { items, count } = useCart();
 
+  const [busqueda, setBusqueda] = useState("");
+
   const rules = comboRules(settings);
   const activos = combos.filter((c) => c.is_active);
   const unidadesCombo = comboUnits(items);
@@ -186,8 +189,17 @@ function CombosPage() {
         )}
 
         <h2 id="suma-productos" className="mt-10 font-display text-3xl">Suma productos a tu combo</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Todos los productos disponibles ({disponibles.length}) para armar tu combo.
+        </p>
+        <Input
+          className="mt-3 h-12"
+          placeholder="Buscar producto para tu combo…"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {destacados.map((p) => (
+          {disponibles.map((p) => (
             <ProductCard key={p.id} product={p} combo />
           ))}
         </div>
