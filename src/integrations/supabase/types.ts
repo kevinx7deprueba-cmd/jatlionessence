@@ -172,6 +172,7 @@ export type Database = {
           address: string
           created_at: string
           customer_name: string
+          delivery_method: string
           department: string
           destination: string
           discount: number
@@ -191,6 +192,7 @@ export type Database = {
           address?: string
           created_at?: string
           customer_name: string
+          delivery_method?: string
           department?: string
           destination?: string
           discount?: number
@@ -210,6 +212,7 @@ export type Database = {
           address?: string
           created_at?: string
           customer_name?: string
+          delivery_method?: string
           department?: string
           destination?: string
           discount?: number
@@ -394,6 +397,7 @@ export type Database = {
       create_order: {
         Args: {
           _customer_name: string
+          _delivery_method?: string
           _department: string
           _destination: string
           _items: Json
