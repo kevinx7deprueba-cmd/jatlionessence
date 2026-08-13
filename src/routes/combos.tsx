@@ -117,10 +117,12 @@ function CombosPage() {
   const falta = Math.max(rules.minItems - unidadesCombo, 0);
   const descuento = comboDiscount(items, rules);
 
-  const destacados = useMemo(
-    () => products.filter((p) => p.stock > 0).slice(0, 12),
-    [products],
-  );
+  const disponibles = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return products
+      .filter((p) => p.stock > 0)
+      .filter((p) => (q ? p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) : true));
+  }, [products, busqueda]);
 
   return (
     <StoreLayout>
