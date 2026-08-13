@@ -70,22 +70,25 @@ export function ProductCard({ product, combo = false }: { product: Product; comb
           className="h-11 w-full rounded-full"
           disabled={agotado}
           onClick={() => {
-            add(
-              {
-                id: product.id,
-                name: product.name,
-                price: Number(product.price),
-                image_url: product.image_url,
-                stock: product.stock,
-                combo,
-              },
-              1,
-            );
+            add(cartItem, 1);
             toast.success(combo ? "Agregado a tu combo" : "Agregado al carrito");
           }}
         >
           {agotado ? "AGOTADO" : combo ? "Agregar a mi combo" : "Agregar al carrito"}
         </Button>
+        {!combo && (
+          <Button
+            variant="outline"
+            className="h-11 w-full rounded-full"
+            disabled={agotado}
+            onClick={() => {
+              add(cartItem, 1);
+              navigate({ to: "/checkout" });
+            }}
+          >
+            Comprar ahora
+          </Button>
+        )}
       </div>
     </article>
   );
