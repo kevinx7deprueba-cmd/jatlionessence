@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAssetUrl } from "@/lib/assets";
 import { useCart } from "@/lib/cart";
 import { categoriesQuery } from "@/lib/queries";
-import { formatPrice, type Product } from "@/lib/store";
+import { formatPrice, isBuyable, type Product } from "@/lib/store";
 
 export const Route = createFileRoute("/producto/$id")({
   head: () => ({
