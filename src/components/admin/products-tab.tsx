@@ -38,6 +38,7 @@ type Draft = {
   category: string;
   image_url: string;
   stock: string;
+  is_available: boolean;
   featured: boolean;
   is_new: boolean;
   is_offer: boolean;
@@ -52,6 +53,7 @@ const empty = (category: string): Draft => ({
   category,
   image_url: "",
   stock: "0",
+  is_available: true,
   featured: false,
   is_new: false,
   is_offer: false,
@@ -70,7 +72,7 @@ function Row({
   onDelete: () => void;
 }) {
   const img = useAssetUrl(product.image_url);
-  const cat = categories.find((c) => c.slug === product.category)?.name ?? product.category;
+  const cat = categories.find((c) => c.slug === product.category)?.name ?? "Sin categoría";
   return (
     <div className="flex gap-3 rounded-lg border border-border bg-card p-3">
       <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-secondary">
@@ -80,6 +82,9 @@ function Row({
         <div className="flex flex-wrap items-center gap-1.5">
           <h3 className="truncate font-display text-lg">{product.name}</h3>
           {!product.is_active && <Badge variant="outline">Oculto</Badge>}
+          <Badge variant="outline">
+            {product.is_available !== false && product.stock > 0 ? "🟢 Disponible" : "🔴 Agotado"}
+          </Badge>
           {product.is_new && <Badge className="bg-gold text-ink">Nuevo</Badge>}
           {product.is_offer && <Badge variant="destructive">Oferta</Badge>}
         </div>
@@ -124,6 +129,7 @@ export function ProductsTab() {
         category: d.category,
         image_url: d.image_url.trim() || null,
         stock: Number(d.stock) || 0,
+        is_available: d.is_available,
         featured: d.featured,
         is_new: d.is_new,
         is_offer: d.is_offer,
@@ -195,6 +201,7 @@ export function ProductsTab() {
                 category: p.category,
                 image_url: p.image_url ?? "",
                 stock: String(p.stock),
+                is_available: p.is_available !== false,
                 featured: p.featured,
                 is_new: p.is_new,
                 is_offer: p.is_offer,
@@ -287,6 +294,7 @@ export function ProductsTab() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="sin-categoria">Sin categoría</SelectItem>
                   {categories.map((c) => (
                     <SelectItem key={c.slug} value={c.slug}>
                       {c.name}
@@ -303,6 +311,7 @@ export function ProductsTab() {
             />
             {(
               [
+                ["is_available", "🟢 Disponibilidad (desactiva para marcar AGOTADO)"],
                 ["is_active", "Visible en la tienda"],
                 ["is_new", "Etiqueta “Nuevo”"],
                 ["is_offer", "Etiqueta “Oferta”"],

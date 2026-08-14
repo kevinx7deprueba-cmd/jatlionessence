@@ -15,6 +15,7 @@ type Form = {
   whatsapp: string;
   logo_url: string;
   qr_image_url: string;
+  qr_dynamic_template: string;
   shipping_cost: string;
   combo_min_items: string;
   combo_discount_percent: string;
@@ -29,6 +30,7 @@ const blank: Form = {
   whatsapp: "",
   logo_url: "",
   qr_image_url: "",
+  qr_dynamic_template: "",
   shipping_cost: "20",
   combo_min_items: "3",
   combo_discount_percent: "20",
@@ -50,6 +52,7 @@ export function SettingsTab() {
       whatsapp: settings.whatsapp ?? "",
       logo_url: settings.logo_url ?? "",
       qr_image_url: settings.qr_image_url ?? "",
+      qr_dynamic_template: settings.qr_dynamic_template ?? "",
       shipping_cost: String(settings.shipping_cost ?? 20),
       combo_min_items: String(settings.combo_min_items ?? 3),
       combo_discount_percent: String(settings.combo_discount_percent ?? 20),
@@ -67,6 +70,7 @@ export function SettingsTab() {
         whatsapp: form.whatsapp.trim().slice(0, 30),
         logo_url: form.logo_url.trim() || null,
         qr_image_url: form.qr_image_url.trim() || null,
+        qr_dynamic_template: form.qr_dynamic_template.trim(),
         shipping_cost: Number(form.shipping_cost) || 0,
         combo_min_items: Math.max(Number(form.combo_min_items) || 0, 0),
         combo_discount_percent: Math.min(Math.max(Number(form.combo_discount_percent) || 0, 0), 90),
@@ -130,6 +134,21 @@ export function SettingsTab() {
           value={form.qr_image_url}
           onChange={(qr_image_url) => setForm({ ...form, qr_image_url })}
         />
+        <div className="space-y-1.5">
+          <Label htmlFor="s-qrtpl">Plantilla de QR dinámico (opcional)</Label>
+          <Input
+            id="s-qrtpl"
+            className="h-11"
+            placeholder="https://pago.tubanco.com/qr?cuenta=123&monto={monto}"
+            value={form.qr_dynamic_template}
+            onChange={(e) => setForm({ ...form, qr_dynamic_template: e.target.value })}
+          />
+          <p className="text-xs text-muted-foreground">
+            Si tu proveedor de pago permite links o QR con monto, pega aquí el enlace usando{" "}
+            {"{monto}"} donde va el importe. El checkout generará un QR con el monto exacto del
+            pedido. Si lo dejas vacío se mostrará el QR fijo que subiste arriba.
+          </p>
+        </div>
         {field("shipping_cost", "Costo de envío (Bs)", { type: "number", min: "0", step: "0.01" })}
       </section>
 
