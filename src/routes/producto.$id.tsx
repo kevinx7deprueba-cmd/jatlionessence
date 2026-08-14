@@ -41,7 +41,7 @@ function ProductPage() {
   });
 
   const image = useAssetUrl(product?.image_url ?? null);
-  const agotado = !product || product.stock <= 0;
+  const agotado = !product || !isBuyable(product);
   const categoryName = categories.find((c) => c.slug === product?.category)?.name ?? product?.category;
 
   if (isLoading) {
@@ -109,7 +109,7 @@ function ProductPage() {
               ) : null}
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              {agotado ? "Sin stock disponible" : `Disponible · ${product.stock} en stock`}
+              {agotado ? "🔴 AGOTADO" : `🟢 Disponible · ${product.stock} en stock`}
             </p>
             <p className="mt-4 whitespace-pre-line text-sm leading-relaxed">{product.description}</p>
 

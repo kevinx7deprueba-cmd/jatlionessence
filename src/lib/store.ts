@@ -20,6 +20,7 @@ export const transportLabel = (value: string) =>
   TRANSPORTS.find((t) => t.value === value)?.label ?? value;
 
 export const ORDER_STATUSES = [
+  { value: "checkout_en_progreso", label: "🟡 Checkout en progreso" },
   { value: "pago_pendiente", label: "🟡 Pago pendiente de verificación" },
   { value: "pago_confirmado", label: "🟢 Pago confirmado" },
   { value: "preparando", label: "📦 Preparando pedido" },
@@ -51,6 +52,7 @@ export type Product = {
   category: string;
   image_url: string | null;
   stock: number;
+  is_available: boolean;
   featured: boolean;
   is_active: boolean;
   is_new: boolean;
@@ -63,6 +65,7 @@ export type Category = {
   slug: string;
   name: string;
   blurb: string;
+  image_url: string | null;
   sort_order: number;
   is_active: boolean;
 };
@@ -89,7 +92,12 @@ export type StoreSettings = {
   tiktok_url: string;
   combo_min_items: number;
   combo_discount_percent: number;
+  qr_dynamic_template: string;
 };
+
+/** true cuando el producto puede comprarse (disponible manualmente y con stock). */
+export const isBuyable = (p: { is_available?: boolean; stock: number }) =>
+  p.is_available !== false && p.stock > 0;
 
 export type ComboItem = {
   id: string;

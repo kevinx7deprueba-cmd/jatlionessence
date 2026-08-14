@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { useAssetUrl } from "@/lib/assets";
 import { useCart } from "@/lib/cart";
-import { formatPrice, type Product } from "@/lib/store";
+import { formatPrice, isBuyable, type Product } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -11,7 +11,7 @@ export function ProductCard({ product, combo = false }: { product: Product; comb
   const image = useAssetUrl(product.image_url);
   const { add } = useCart();
   const navigate = useNavigate();
-  const agotado = product.stock <= 0;
+  const agotado = !isBuyable(product);
 
   const cartItem = {
     id: product.id,
