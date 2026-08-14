@@ -19,6 +19,7 @@ export type Database = {
           blurb: string
           created_at: string
           id: string
+          image_url: string | null
           is_active: boolean
           name: string
           slug: string
@@ -29,6 +30,7 @@ export type Database = {
           blurb?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           is_active?: boolean
           name: string
           slug: string
@@ -39,6 +41,7 @@ export type Database = {
           blurb?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           is_active?: boolean
           name?: string
           slug?: string
@@ -176,6 +179,7 @@ export type Database = {
           department: string
           destination: string
           discount: number
+          expires_at: string | null
           id: string
           notes: string
           order_number: string | null
@@ -196,6 +200,7 @@ export type Database = {
           department?: string
           destination?: string
           discount?: number
+          expires_at?: string | null
           id?: string
           notes?: string
           order_number?: string | null
@@ -216,6 +221,7 @@ export type Database = {
           department?: string
           destination?: string
           discount?: number
+          expires_at?: string | null
           id?: string
           notes?: string
           order_number?: string | null
@@ -240,6 +246,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_active: boolean
+          is_available: boolean
           is_new: boolean
           is_offer: boolean
           name: string
@@ -256,6 +263,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean
+          is_available?: boolean
           is_new?: boolean
           is_offer?: boolean
           name: string
@@ -272,6 +280,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean
+          is_available?: boolean
           is_new?: boolean
           is_offer?: boolean
           name?: string
@@ -324,6 +333,7 @@ export type Database = {
           id: string
           instagram_url: string
           logo_url: string | null
+          qr_dynamic_template: string
           qr_image_url: string | null
           shipping_cost: number
           singleton: boolean
@@ -341,6 +351,7 @@ export type Database = {
           id?: string
           instagram_url?: string
           logo_url?: string | null
+          qr_dynamic_template?: string
           qr_image_url?: string | null
           shipping_cost?: number
           singleton?: boolean
@@ -358,6 +369,7 @@ export type Database = {
           id?: string
           instagram_url?: string
           logo_url?: string | null
+          qr_dynamic_template?: string
           qr_image_url?: string | null
           shipping_cost?: number
           singleton?: boolean
@@ -394,21 +406,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_order: {
-        Args: {
-          _customer_name: string
-          _delivery_method?: string
-          _department: string
-          _destination: string
-          _items: Json
-          _notes: string
-          _phone: string
-          _receipt_path: string
-          _shipping_cost: number
-          _transport: string
-        }
-        Returns: string
-      }
+      cancel_checkout: { Args: { _id: string }; Returns: undefined }
+      create_order:
+        | {
+            Args: {
+              _customer_name: string
+              _delivery_method?: string
+              _department: string
+              _destination: string
+              _items: Json
+              _notes: string
+              _phone: string
+              _receipt_path: string
+              _shipping_cost: number
+              _transport: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              _checkout_id?: string
+              _customer_name: string
+              _delivery_method?: string
+              _department: string
+              _destination: string
+              _items: Json
+              _notes: string
+              _phone: string
+              _receipt_path: string
+              _shipping_cost: number
+              _transport: string
+            }
+            Returns: string
+          }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -416,6 +446,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      purge_expired_checkouts: { Args: never; Returns: undefined }
+      start_checkout: { Args: never; Returns: string }
     }
     Enums: {
       app_role: "admin" | "user"
