@@ -25,6 +25,19 @@ export const categoriesQuery = queryOptions({
   staleTime: 60_000,
 });
 
+export const adminCategoriesQuery = queryOptions({
+  queryKey: ["admin-categories"],
+  queryFn: async (): Promise<Category[]> => {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("*")
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as unknown as Category[];
+  },
+});
+
 export const productsQuery = queryOptions({
   queryKey: ["products"],
   queryFn: async (): Promise<Product[]> => {
@@ -66,6 +79,7 @@ export const combosQuery = queryOptions({
 export const adminOrdersQuery = queryOptions({
   queryKey: ["admin-orders"],
   queryFn: async () => {
+    await supabase.rpc("purge_expired_checkouts");
     const { data, error } = await supabase
       .from("orders")
       .select("*, order_items(*)")

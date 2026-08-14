@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useAssetUrl } from "@/lib/assets";
 import { useCart } from "@/lib/cart";
 import { combosQuery, productsQuery, settingsQuery } from "@/lib/queries";
-import { comboDiscount, comboRules, comboUnits, formatPrice, type Combo, type Product } from "@/lib/store";
+import { comboDiscount, comboRules, comboUnits, formatPrice, type Combo, type Product, isBuyable } from "@/lib/store";
 
 export const Route = createFileRoute("/combos")({
   head: () => ({
@@ -45,7 +45,7 @@ function ComboCard({ combo, products }: { combo: Combo; products: Product[] }) {
   const normal = lines.reduce((s, l) => s + Number(l.product.price) * l.qty, 0);
   const pct = Number(combo.discount_percent);
   const final = Math.round(normal * (1 - pct / 100) * 100) / 100;
-  const agotado = lines.length === 0 || lines.some((l) => l.product.stock <= 0);
+  const agotado = lines.length === 0 || lines.some((l) => !isBuyable(l.product));
 
   return (
     <article className="flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-soft">
@@ -123,7 +123,7 @@ function CombosPage() {
   const disponibles = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
     return products
-      .filter((p) => p.stock > 0)
+      .filter((p) => isBuyable(p))
       .filter((p) => (q ? p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) : true));
   }, [products, busqueda]);
 
